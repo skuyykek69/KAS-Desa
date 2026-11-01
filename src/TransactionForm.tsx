@@ -40,7 +40,8 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
     try {
       // 1. Upload file bukti ke Supabase Storage (Bucket: 'receipts')
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36.substring(2))}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
       const { error: uploadError } = await supabase.storage
         .from('receipts')
         .upload(fileName, file);
