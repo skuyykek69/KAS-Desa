@@ -7,9 +7,10 @@ const supabase = createClient(
 );
 
 export default function TransactionForm({ onSuccess }: { onSuccess?: () => void }) {
-  const [type, setType] = useState<'masuk' | 'keluar'>('masuk');
   const [amount, setAmount] = useState<string>('');
-  const [nameOrDesc, setNameOrDesc] = useState<string>('');
+  const [contributorName, setContributorName] = useState<string>('');
+  const [category, setCategory] = useState<string>('Iuran Warga Bulanan');
+  const [transactionDate, setTransactionDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -19,19 +20,15 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
     setErrorMsg(null);
 
     if (!amount || Number(amount) <= 0) {
-      setErrorMsg('Nominal uang harus diisi dengan benar.');
+      setErrorMsg('Masukkan nominal iuran dengan benar.');
+      return;
+    }
+    if (!contributorName.trim()) {
+      setErrorMsg('Harap isi nama lengkap warga dan asal RT/RW.');
       return;
     }
     if (!file) {
-      setErrorMsg('Wajib mengunggah foto bukti transfer atau nota.');
-      return;
-    }
-    if (type === 'masuk' && !nameOrDesc.trim()) {
-      setErrorMsg('Harap isi kolom "Atas Nama" untuk uang masuk.');
-      return;
-    }
-    if (type === 'keluar' && !nameOrDesc.trim()) {
-      setErrorMsg('Harap isi kolom "Keperluan" untuk uang keluar.');
+      setErrorMsg('Wajib melampirkan foto bukti transfer (m-banking / kuitansi).');
       return;
     }
 
@@ -50,15 +47,15 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
         .from('receipts')
         .getPublicUrl(fileName);
 
-      const proofUrl = publicUrlData.publicUrl;
-
       const payload = {
-        type,
+        type: 'masuk',
         amount: Number(amount),
-        contributor_name: type === 'masuk' ? nameOrDesc : null,
-        description: type === 'keluar' ? nameOrDesc : 'Setoran iuran kas warga',
-        proof_url: proofUrl,
-        status: type === 'masuk' ? 'pending' : 'approved',
+        category,
+        contributor_name: contributorName,
+        description: `Setoran iuran dari ${contributorName}`,
+        transaction_date: transactionDate,
+        proof_url: publicUrlData.publicUrl,
+        status: 'pending', // Menunggu verifikasi bendahara
       };
 
       const { error: dbError } = await supabase
@@ -67,10 +64,9 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
 
       if (dbError) throw new Error(`Gagal menyimpan ke database: ${dbError.message}`);
 
-      alert(type === 'masuk' ? 'Setoran berhasil dikirim! Menunggu verifikasi bendahara.' : 'Pengeluaran kas berhasil dicatat.');
-      
+      alert('Setoran iuran berhasil dikirim! Menunggu validasi dari bendahara desa.');
       setAmount('');
-      setNameOrDesc('');
+      setContributorName('');
       setFile(null);
       if (onSuccess) onSuccess();
 
@@ -83,22 +79,34 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
 
   return (
     <div style={{ maxWidth: '520px', margin: '0 auto', background: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-      <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#0f172a' }}>Form Pencatatan Kas</h3>
-      <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Laporkan iuran masuk atau pengeluaran kas dengan melampirkan foto bukti sah.</p>
+      <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#0f172a' }}>Form Setor Iuran Warga</h3>
+      <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Laporkan transfer iuran Anda agar dapat divalidasi oleh bendahara dan masuk ke kas aktif.</p>
       
       {errorMsg && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '6px', fontSize: '13px', marginBottom: '20px', border: '1px solid #fecaca' }}>{errorMsg}</div>}
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Jenis Transaksi:</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Kategori Setoran:</label>
           <select 
-            value={type} 
-            onChange={(e) => setType(e.target.value as 'masuk' | 'keluar')} 
+            value={category} 
+            onChange={(e) => setCategory(e.target.value)} 
             style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', fontSize: '14px' }}
           >
-            <option value="masuk">Uang Masuk (Iuran / Donasi)</option>
-            <option value="keluar">Uang Keluar (Belanja / Operasional)</option>
+            <option value="Iuran Warga Bulanan">Iuran Warga Bulanan</option>
+            <option value="Donasi / Sumbangan">Donasi / Sumbangan Warga</option>
+            <option value="Dana Bantuan Pemerintah">Dana Bantuan Pemerintah</option>
+            <option value="Lainnya">Lainnya</option>
           </select>
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Tanggal Transfer / Setor:</label>
+          <input 
+            type="date" 
+            value={transactionDate} 
+            onChange={(e) => setTransactionDate(e.target.value)} 
+            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '14px' }}
+          />
         </div>
 
         <div style={{ marginBottom: '16px' }}>
@@ -113,20 +121,18 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
         </div>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
-            {type === 'masuk' ? 'Atas Nama (Warga / Donatur):' : 'Untuk Keperluan Apa (Deskripsi):'}
-          </label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Atas Nama (Nama Lengkap & RT/RW):</label>
           <input 
             type="text" 
-            value={nameOrDesc} 
-            onChange={(e) => setNameOrDesc(e.target.value)} 
-            placeholder={type === 'masuk' ? 'Nama lengkap warga' : 'Misal: Perbaikan lampu jalan RT 02'} 
+            value={contributorName} 
+            onChange={(e) => setContributorName(e.target.value)} 
+            placeholder="Contoh: Budi Santoso (RT 02/RW 01)" 
             style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '14px' }}
           />
         </div>
 
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Upload Bukti (Foto Transfer / Nota):</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Upload Bukti Transfer (Screenshot M-Banking):</label>
           <input 
             type="file" 
             accept="image/*" 
@@ -138,9 +144,9 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
         <button 
           type="submit" 
           disabled={loading}
-          style={{ width: '100%', padding: '12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '15px', cursor: 'pointer', transition: 'background 0.2s' }}
+          style={{ width: '100%', padding: '12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}
         >
-          {loading ? 'Mengunggah & Menyimpan...' : 'Kirim Transaksi'}
+          {loading ? 'Mengunggah & Mengirim...' : 'Kirim Bukti Setoran'}
         </button>
       </form>
     </div>
