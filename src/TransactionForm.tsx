@@ -28,7 +28,7 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
       return;
     }
     if (!file) {
-      setErrorMsg('Wajib melampirkan foto bukti transfer (m-banking / kuitansi).');
+      setErrorMsg('Wajib melampirkan foto bukti transfer.');
       return;
     }
 
@@ -55,7 +55,7 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
         description: `Setoran iuran dari ${contributorName}`,
         transaction_date: transactionDate,
         proof_url: publicUrlData.publicUrl,
-        status: 'pending', // Menunggu verifikasi bendahara
+        status: 'pending',
       };
 
       const { error: dbError } = await supabase
@@ -64,7 +64,7 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
 
       if (dbError) throw new Error(`Gagal menyimpan ke database: ${dbError.message}`);
 
-      alert('Setoran iuran berhasil dikirim! Menunggu validasi dari bendahara desa.');
+      alert('Setoran berhasil dikirim! Menunggu validasi bendahara.');
       setAmount('');
       setContributorName('');
       setFile(null);
@@ -78,19 +78,19 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
   };
 
   return (
-    <div style={{ maxWidth: '520px', margin: '0 auto', background: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-      <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#0f172a' }}>Form Setor Iuran Warga</h3>
-      <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>Laporkan transfer iuran Anda agar dapat divalidasi oleh bendahara dan masuk ke kas aktif.</p>
+    <div style={{ maxWidth: '480px', margin: '20px auto', background: '#ffffff', padding: '32px', borderRadius: '10px', border: '1px solid #e4e4e7', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
+      <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '6px', color: '#09090b', letterSpacing: '-0.01em' }}>Form Setor Iuran Warga</h3>
+      <p style={{ color: '#71717a', fontSize: '13.5px', marginBottom: '24px' }}>Kirimkan bukti transfer untuk divalidasi ke kas aktif desa.</p>
       
-      {errorMsg && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '6px', fontSize: '13px', marginBottom: '20px', border: '1px solid #fecaca' }}>{errorMsg}</div>}
+      {errorMsg && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px 12px', borderRadius: '6px', fontSize: '13px', marginBottom: '20px', border: '1px solid #fecaca' }}>{errorMsg}</div>}
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Kategori Setoran:</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>Kategori Setoran:</label>
           <select 
             value={category} 
             onChange={(e) => setCategory(e.target.value)} 
-            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', fontSize: '14px' }}
+            style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', background: '#fff', fontSize: '14px', outline: 'none' }}
           >
             <option value="Iuran Warga Bulanan">Iuran Warga Bulanan</option>
             <option value="Donasi / Sumbangan">Donasi / Sumbangan Warga</option>
@@ -100,53 +100,53 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
         </div>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Tanggal Transfer / Setor:</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>Tanggal Transfer:</label>
           <input 
             type="date" 
             value={transactionDate} 
             onChange={(e) => setTransactionDate(e.target.value)} 
-            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '14px' }}
+            style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', fontSize: '14px', outline: 'none' }}
           />
         </div>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Nominal (Rp):</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>Nominal (Rp):</label>
           <input 
             type="number" 
             value={amount} 
             onChange={(e) => setAmount(e.target.value)} 
-            placeholder="Contoh: 50000" 
-            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '14px' }}
+            placeholder="50000" 
+            style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', fontSize: '14px', outline: 'none' }}
           />
         </div>
 
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Atas Nama (Nama Lengkap & RT/RW):</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>Atas Nama (Nama & RT/RW):</label>
           <input 
             type="text" 
             value={contributorName} 
             onChange={(e) => setContributorName(e.target.value)} 
-            placeholder="Contoh: Budi Santoso (RT 02/RW 01)" 
-            style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '14px' }}
+            placeholder="Budi Santoso (RT 02/RW 01)" 
+            style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', fontSize: '14px', outline: 'none' }}
           />
         </div>
 
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>Upload Bukti Transfer (Screenshot M-Banking):</label>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>Foto Bukti Transfer:</label>
           <input 
             type="file" 
             accept="image/*" 
             onChange={(e) => e.target.files && setFile(e.target.files[0])} 
-            style={{ width: '100%', fontSize: '13px', color: '#475569' }}
+            style={{ width: '100%', fontSize: '13px', color: '#71717a' }}
           />
         </div>
 
         <button 
           type="submit" 
           disabled={loading}
-          style={{ width: '100%', padding: '12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}
+          style={{ width: '100%', padding: '10px', backgroundColor: '#09090b', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 500, fontSize: '14px', cursor: 'pointer' }}
         >
-          {loading ? 'Mengunggah & Mengirim...' : 'Kirim Bukti Setoran'}
+          {loading ? 'Mengunggah...' : 'Kirim Bukti Setoran'}
         </button>
       </form>
     </div>
