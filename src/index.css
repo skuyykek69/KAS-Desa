@@ -1,14 +1,17 @@
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --background: #f8fafc;
+  --bg-app: #f4f4f5;
   --surface: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --radius: 10px;
+  --surface-subtle: #fafafa;
+  --text-main: #09090b;
+  --text-muted: #71717a;
+  --border: #e4e4e7;
+  --primary: #09090b; /* Mengganti biru generik dengan Dark Slate elegan */
+  --primary-hover: #27272a;
+  --success: #059669; /* Emerald modern untuk uang masuk */
+  --success-bg: #ecfdf5;
+  --danger: #dc2626;  /* Red modern untuk pengeluaran */
+  --danger-bg: #fef2f2;
+  --radius: 8px;
 }
 
 * {
@@ -19,7 +22,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--background);
+  background-color: var(--bg-app);
   color: var(--text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -29,12 +32,14 @@ input, select, button, textarea {
   font-family: inherit;
 }
 
+/* Custom Scrollbar & Table Container */
 .table-container {
   width: 100%;
   overflow-x: auto;
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
 }
 
 @media (max-width: 768px) {
