@@ -9,7 +9,7 @@ export default function App() {
   const [pin, setPin] = useState<string>('');
   const [pinError, setPinError] = useState<string>('');
 
-  const ADMIN_PIN = "325277"; 
+  const ADMIN_PIN = "123456"; 
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,50 +19,48 @@ export default function App() {
       setActiveTab('admin-panel');
       setPin('');
     } else {
-      setPinError('PIN Bendahara tidak valid.');
+      setPinError('Otorisasi ditolak: PIN salah.');
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Navbar Modern FinTech */}
-      <nav className="nav-flex" style={{
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f4f4f5' }}>
+      {/* Header Industrial Style */}
+      <header style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '16px 32px',
-        background: '#ffffff',
-        borderBottom: '1px solid #e4e4e7',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100
+        background: '#09090b',
+        color: '#ffffff',
+        borderBottom: '2px solid #27272a'
       }}>
-        <div style={{ fontWeight: 600, fontSize: '16px', display: 'flex', alignItems: 'center', gap: '10px', color: '#09090b', letterSpacing: '-0.01em' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#059669', display: 'inline-block' }}></span>
-          Keuangan Desa Terintegrasi
+        <div style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ background: '#10b981', width: '10px', height: '10px', display: 'inline-block' }}></span>
+          SISTEM KEUANGAN DESA // LIVE TERMINAL
         </div>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+        <nav style={{ display: 'flex', gap: '2px' }}>
           <button 
             onClick={() => setActiveTab('dashboard')}
             style={{
-              padding: '7px 14px', borderRadius: '6px', border: 'none', fontWeight: 500, fontSize: '13.5px', cursor: 'pointer',
-              background: activeTab === 'dashboard' ? '#09090b' : 'transparent',
-              color: activeTab === 'dashboard' ? '#ffffff' : '#71717a',
-              transition: 'all 0.15s ease'
+              padding: '8px 16px', border: 'none', fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+              background: activeTab === 'dashboard' ? '#ffffff' : '#27272a',
+              color: activeTab === 'dashboard' ? '#09090b' : '#ffffff',
+              textTransform: 'uppercase', letterSpacing: '0.05em'
             }}
           >
-            Dashboard Publik
+            Dashboard
           </button>
           <button 
             onClick={() => setActiveTab('deposit')}
             style={{
-              padding: '7px 14px', borderRadius: '6px', border: 'none', fontWeight: 500, fontSize: '13.5px', cursor: 'pointer',
-              background: activeTab === 'deposit' ? '#09090b' : 'transparent',
-              color: activeTab === 'deposit' ? '#ffffff' : '#71717a',
-              transition: 'all 0.15s ease'
+              padding: '8px 16px', border: 'none', fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+              background: activeTab === 'deposit' ? '#ffffff' : '#27272a',
+              color: activeTab === 'deposit' ? '#09090b' : '#ffffff',
+              textTransform: 'uppercase', letterSpacing: '0.05em'
             }}
           >
-            + Setor Iuran Warga
+            + Setor Iuran
           </button>
           <button 
             onClick={() => {
@@ -70,45 +68,47 @@ export default function App() {
               else setActiveTab('admin-login');
             }}
             style={{
-              padding: '7px 14px', borderRadius: '6px', border: 'none', fontWeight: 500, fontSize: '13.5px', cursor: 'pointer',
-              background: (activeTab === 'admin-panel' || activeTab === 'admin-login') ? '#27272a' : 'transparent',
-              color: (activeTab === 'admin-panel' || activeTab === 'admin-login') ? '#ffffff' : '#71717a',
-              border: '1px solid #e4e4e7'
+              padding: '8px 16px', border: 'none', fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+              background: (activeTab === 'admin-panel' || activeTab === 'admin-login') ? '#3f3f46' : '#18181b',
+              color: '#ffffff',
+              borderLeft: '1px solid #3f3f46',
+              textTransform: 'uppercase', letterSpacing: '0.05em'
             }}
           >
-            🔒 Portal Bendahara
+            🔒 Portal Admin
           </button>
-        </div>
-      </nav>
+        </nav>
+      </header>
 
-      <main style={{ flex: 1, padding: '40px 20px', maxWidth: '1080px', width: '100%', margin: '0 auto' }}>
+      {/* Main Content Terminal */}
+      <main style={{ flex: 1, padding: '32px 24px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
         {activeTab === 'dashboard' && <PublicDashboard />}
         {activeTab === 'deposit' && <TransactionForm onSuccess={() => setActiveTab('dashboard')} />}
 
         {activeTab === 'admin-login' && !isAdminAuth && (
-          <div style={{ maxWidth: '380px', margin: '60px auto', background: '#ffffff', padding: '32px', borderRadius: '10px', border: '1px solid #e4e4e7', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.03)' }}>
-            <h3 style={{ marginBottom: '6px', fontSize: '18px', fontWeight: 600, color: '#09090b', letterSpacing: '-0.01em' }}>Otorisasi Bendahara</h3>
-            <p style={{ fontSize: '13.5px', color: '#71717a', marginBottom: '20px' }}>Masukkan PIN pengurus untuk mengakses panel validasi.</p>
+          <div style={{ maxWidth: '400px', margin: '40px auto', background: '#ffffff', padding: '32px', border: '1px solid #27272a' }}>
+            <h3 style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 700, textTransform: 'uppercase' }}>Otorisasi Pengurus</h3>
+            <p style={{ fontSize: '12px', color: '#71717a', marginBottom: '20px' }}>Masukkan PIN pengaman bendahara untuk masuk.</p>
             
-            {pinError && <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px', borderRadius: '6px', fontSize: '13px', marginBottom: '16px', border: '1px solid #fecaca' }}>{pinError}</div>}
+            {pinError && <div style={{ background: '#fef2f2', color: '#b91c1c', padding: '10px', fontSize: '12px', marginBottom: '16px', border: '1px solid #fecaca' }}>{pinError}</div>}
             
             <form onSubmit={handleLogin}>
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px', color: '#3f3f46' }}>PIN Akses:</label>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, marginBottom: '6px', textTransform: 'uppercase' }}>PIN Akses:</label>
                 <input 
                   type="password" 
                   value={pin} 
                   onChange={(e) => setPin(e.target.value)} 
-                  placeholder="••••••" 
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', fontSize: '14px', outline: 'none' }}
+                  placeholder="******" 
+                  style={{ width: '100%', padding: '10px', border: '1px solid #27272a', fontSize: '14px', outline: 'none' }}
                   autoFocus
                 />
               </div>
               <button 
                 type="submit" 
-                style={{ width: '100%', padding: '10px', background: '#09090b', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 500, fontSize: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '10px', background: '#09090b', color: '#ffffff', border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', textTransform: 'uppercase' }}
               >
-                Masuk Sistem
+                Autentikasi Sesi
               </button>
             </form>
           </div>
@@ -119,8 +119,8 @@ export default function App() {
         )}
       </main>
 
-      <footer style={{ textAlign: 'center', padding: '24px', color: '#a1a1aa', fontSize: '12.5px', borderTop: '1px solid #e4e4e7', background: '#ffffff' }}>
-        &copy; 2026 Transparansi Keuangan Desa. Dibangun dengan standar akuntabilitas publik.
+      <footer style={{ textAlign: 'center', padding: '20px', color: '#71717a', fontSize: '11px', borderTop: '1px solid #d4d4d8', background: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        Sistem Akuntabilitas Keuangan Publik &copy; 2026
       </footer>
     </div>
   );
