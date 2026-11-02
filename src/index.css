@@ -4,8 +4,6 @@
   --text-main: #09090b;
   --text-muted: #71717a;
   --border-color: #27272a;
-  --accent-green: #047857;
-  --accent-red: #b91c1c;
 }
 
 * {
@@ -21,7 +19,6 @@ body {
   line-height: 1.5;
 }
 
-/* Mengubah input dan button menjadi bergaya tajam industrial/fintech */
 input, select, textarea, button {
   font-family: inherit;
   border-radius: 0px !important;
@@ -51,4 +48,29 @@ th {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Responsive Hamburger Utility Classes */
+.desktop-nav {
+  display: flex;
+  gap: 2px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: #27272a;
+  color: #ffffff;
+  border: 1px solid #3f3f46;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: block !important;
+  }
 }
