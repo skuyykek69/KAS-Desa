@@ -45,7 +45,6 @@ export default function PublicDashboard() {
     fetchApprovedTransactions();
   }, []);
 
-  // Filter berdasarkan bulan & kata kunci pencarian
   const filteredTransactions = transactions.filter((t) => {
     const matchesSearch = 
       (t.contributor_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
@@ -58,12 +57,10 @@ export default function PublicDashboard() {
     return matchesSearch && txMonth === selectedMonth;
   });
 
-  // Hitung total keseluruhan (All-Time Saldo)
   const totalMasukAll = transactions.filter(t => t.type === 'masuk').reduce((acc, curr) => acc + curr.amount, 0);
   const totalKeluarAll = transactions.filter(t => t.type === 'keluar').reduce((acc, curr) => acc + curr.amount, 0);
   const saldoAkhir = totalMasukAll - totalKeluarAll;
 
-  // Hitung total Bulan Ini (Berdasarkan filter atau bulan berjalan saat ini)
   const currentYMD = new Date().toISOString().slice(0, 7);
   const activeMonthFilter = selectedMonth === 'all' ? currentYMD : selectedMonth;
 
@@ -75,28 +72,27 @@ export default function PublicDashboard() {
   const totalMasukBulanIni = monthTransactions.filter(t => t.type === 'masuk').reduce((acc, curr) => acc + curr.amount, 0);
   const totalKeluarBulanIni = monthTransactions.filter(t => t.type === 'keluar').reduce((acc, curr) => acc + curr.amount, 0);
 
-  // Daftar opsi bulan unik dari riwayat data
   const availableMonths = Array.from(new Set(transactions.map(t => {
     return t.transaction_date ? t.transaction_date.slice(0, 7) : t.created_at.slice(0, 7);
   }))).sort().reverse();
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}>Memuat transparansi keuangan kas desa...</div>;
+    return <div style={{ textAlign: 'center', padding: '60px', color: '#71717a', fontSize: '14px' }}>Memuat data keuangan...</div>;
   }
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>Transparansi Keuangan Desa</h2>
-          <p style={{ color: '#64748b', fontSize: '15px' }}>Seluruh catatan pemasukan iuran dan pengeluaran dana desa yang sah secara real-time.</p>
+          <h2 style={{ fontSize: '22px', fontWeight: 600, color: '#09090b', letterSpacing: '-0.02em', marginBottom: '4px' }}>Laporan Transparansi Kas Desa</h2>
+          <p style={{ color: '#71717a', fontSize: '14px' }}>Ringkasan seluruh arus kas masuk dan keluar yang transparan dan akuntabel.</p>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Filter Periode Bulan:</label>
+          <label style={{ display: 'block', fontSize: '11.5px', fontWeight: 500, color: '#71717a', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Periode:</label>
           <select 
             value={selectedMonth} 
             onChange={(e) => setSelectedMonth(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', fontSize: '14px', fontWeight: 500 }}
+            style={{ padding: '7px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', background: '#fff', fontSize: '13.5px', fontWeight: 500, color: '#09090b', outline: 'none' }}
           >
             <option value="all">Semua Periode (All-Time)</option>
             {availableMonths.map(m => (
@@ -106,66 +102,66 @@ export default function PublicDashboard() {
         </div>
       </div>
 
-      {/* Kartu Ringkasan Keuangan */}
+      {/* Kartu Ringkasan Statistik */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.02)', borderLeft: '4px solid #2563eb' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Saldo Kas Aktif</span>
-          <p style={{ margin: '8px 0 0 0', fontSize: '26px', fontWeight: 700, color: '#2563eb' }}>
+        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e4e4e7', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.02)' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Saldo Kas Aktif</span>
+          <p style={{ margin: '8px 0 0 0', fontSize: '24px', fontWeight: 600, color: '#09090b', letterSpacing: '-0.02em' }}>
             Rp {saldoAkhir.toLocaleString('id-ID')}
           </p>
         </div>
         
-        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.02)', borderLeft: '4px solid #16a34a' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pemasukan Periode Ini</span>
-          <p style={{ margin: '8px 0 0 0', fontSize: '24px', fontWeight: 700, color: '#16a34a' }}>
+        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e4e4e7', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.02)' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pemasukan Periode Ini</span>
+          <p style={{ margin: '8px 0 0 0', fontSize: '22px', fontWeight: 600, color: '#059669', letterSpacing: '-0.02em' }}>
             Rp {totalMasukBulanIni.toLocaleString('id-ID')}
           </p>
         </div>
 
-        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.02)', borderLeft: '4px solid #dc2626' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pengeluaran Periode Ini</span>
-          <p style={{ margin: '8px 0 0 0', fontSize: '24px', fontWeight: 700, color: '#dc2626' }}>
+        <div style={{ background: '#ffffff', padding: '20px', borderRadius: '10px', border: '1px solid #e4e4e7', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.02)' }}>
+          <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pengeluaran Periode Ini</span>
+          <p style={{ margin: '8px 0 0 0', fontSize: '22px', fontWeight: 600, color: '#dc2626', letterSpacing: '-0.02em' }}>
             Rp {totalKeluarBulanIni.toLocaleString('id-ID')}
           </p>
         </div>
       </div>
 
-      {/* Kotak Pencarian & Filter Tabel */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>Riwayat Transaksi Sah ({filteredTransactions.length})</h3>
+      {/* Kontrol Tabel & Pencarian */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '12px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#09090b' }}>Riwayat Transaksi Sah ({filteredTransactions.length})</h3>
         <input 
           type="text" 
           value={searchQuery} 
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Cari nama warga, kategori, atau keperluan..." 
-          style={{ padding: '8px 14px', borderRadius: '6px', border: '1px solid #cbd5e1', width: '280px', fontSize: '14px', background: '#fff' }}
+          placeholder="Cari berdasarkan nama atau keterangan..." 
+          style={{ padding: '7px 12px', borderRadius: '6px', border: '1px solid #d4d4d8', width: '260px', fontSize: '13.5px', background: '#fff', outline: 'none' }}
         />
       </div>
 
-      {/* Tabel Data */}
+      {/* Tabel Data Finansial */}
       <div className="table-container">
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13.5px' }}>
           <thead>
-            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569' }}>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Tanggal</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Kategori</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Keterangan / Nama Warga</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Jenis</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Nominal</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600 }}>Bukti</th>
+            <tr style={{ background: '#fafafa', borderBottom: '1px solid #e4e4e7', color: '#71717a', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Tanggal</th>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Kategori</th>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Keterangan / Nama</th>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Jenis</th>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Nominal</th>
+              <th style={{ padding: '12px 16px', fontWeight: 500 }}>Bukti</th>
             </tr>
           </thead>
           <tbody>
             {filteredTransactions.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: '#94a3b8' }}>
-                  Tidak ada catatan transaksi yang ditemukan pada periode/pencarian ini.
+                <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: '#a1a1aa' }}>
+                  Tidak ada catatan transaksi ditemukan.
                 </td>
               </tr>
             ) : (
               filteredTransactions.map((tx) => (
-                <tr key={tx.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '12px 16px', color: '#64748b', whiteSpace: 'nowrap' }}>
+                <tr key={tx.id} style={{ borderBottom: '1px solid #f4f4f5' }}>
+                  <td style={{ padding: '12px 16px', color: '#71717a', whiteSpace: 'nowrap' }}>
                     {new Date(tx.transaction_date || tx.created_at).toLocaleDateString('id-ID', {
                       day: 'numeric',
                       month: 'short',
@@ -173,23 +169,23 @@ export default function PublicDashboard() {
                     })}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
-                    <span style={{ background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, color: '#334155' }}>
+                    <span style={{ background: '#f4f4f5', padding: '2px 6px', borderRadius: '4px', fontSize: '12px', fontWeight: 500, color: '#3f3f46' }}>
                       {tx.category}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', fontWeight: 500, color: '#0f172a' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: 500, color: '#09090b' }}>
                     {tx.type === 'masuk' ? `Setoran: ${tx.contributor_name}` : tx.description}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{
-                      padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
-                      color: tx.type === 'masuk' ? '#16a34a' : '#dc2626',
-                      background: tx.type === 'masuk' ? '#f0fdf4' : '#fef2f2'
+                      padding: '3px 7px', borderRadius: '4px', fontSize: '11.5px', fontWeight: 500,
+                      color: tx.type === 'masuk' ? '#059669' : '#dc2626',
+                      background: tx.type === 'masuk' ? '#ecfdf5' : '#fef2f2'
                     }}>
                       {tx.type === 'masuk' ? 'Masuk' : 'Keluar'}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', fontWeight: 600, color: tx.type === 'masuk' ? '#16a34a' : '#dc2626', whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: 600, color: tx.type === 'masuk' ? '#059669' : '#dc2626', whiteSpace: 'nowrap' }}>
                     {tx.type === 'masuk' ? '+' : '-'} Rp {tx.amount.toLocaleString('id-ID')}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
@@ -197,9 +193,9 @@ export default function PublicDashboard() {
                       href={tx.proof_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 500, fontSize: '13px' }}
+                      style={{ color: '#09090b', textDecoration: 'none', fontWeight: 500, fontSize: '13px', borderBottom: '1px solid #09090b', paddingBottom: '1px' }}
                     >
-                      Lihat Nota ↗
+                      Nota ↗
                     </a>
                   </td>
                 </tr>
